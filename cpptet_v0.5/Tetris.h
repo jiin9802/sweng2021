@@ -19,7 +19,7 @@ class Tetris {
 		bool justStarted;
 		static int nBlockTypes;
 		static int nBlockDegrees;
-		static std::vector<vector<Matrix>>setOfBlockObjects;
+		static std::vector<Matrix>setOfBlockObjects;
 		static int iScreenDw;
 		int iScreenDy;
 		int iScreenDx;

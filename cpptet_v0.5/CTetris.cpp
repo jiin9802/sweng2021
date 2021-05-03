@@ -1,23 +1,21 @@
 #include "CTetris.h"
-std::vector<vector<Matrix>> CTetris::setOfCBlockObjects;
+std::vector<Matrix> CTetris::setOfCBlockObjects;
 
 void CTetris::init(int* setOfBlockArrays[],int max_types,int max_degrees)
 {
 	Tetris::init(setOfBlockArrays,max_types,max_degrees);
 	for(int i=0;i<max_types;i++)
 	{
-		std::vector<Matrix> CVec_Blk;
-		for(int j=0;j<nBlockDegrees;j++)
+		for(int j=0;j<max_degrees;j++)
 		{
-			Matrix obj=Matrix(setOfBlockObjects[i][j]);
+			Matrix obj=Matrix(setOfBlockObjects[max_degrees+j]);
 			obj.mulc(i+1);
-			CVec_Blk.push_back(obj);
+			setOfCBlockObjects.push_back(obj);
 		}
-		setOfCBlockObjects.push_back(CVec_Blk);
 	}
 	return;
 
-}
+};
 CTetris::CTetris(int dy,int dx):Tetris(dy,dx)
 {
 	arrayScreen=createArrayScreen();
@@ -25,7 +23,7 @@ CTetris::CTetris(int dy,int dx):Tetris(dy,dx)
 	oCScreen=iCScreen;
 	return;
 
-}
+};
 TetrisState CTetris::accept(char key)
 {
 //	state=Running;
@@ -38,17 +36,23 @@ TetrisState CTetris::accept(char key)
 	}
 	state=Tetris::accept(key);
 
-	currCBlk=setOfCBlockObjects[idxBlockType][idxBlockDegree];
+	currCBlk=setOfCBlockObjects[nBlockDegrees*idxBlockType+idxBlockDegree];
 	
-	tempBlk=iCScreen->clip(top,left,top+currCBlk.get_dy(),left+currCBlk.get_dx());
+	tempBlk=iCScreen->clip(top,left,top+currCBlk.get_dy(),left+currCBlk.get_dy());
 	tempBlk=tempBlk.add(&currBlk);
 
 	oCScreen=new Matrix(iCScreen);
 	oCScreen->paste(&tempBlk,top,left);
 	return state;
-}
+};
 void CTetris::deleteFullLines()
 {
-	
-}
+	for(int i=0;i<iScreenDy;i++)
+	{
+		int cnt=oCScreen->binary()->clip(i,iScreenDw, i+1,iScreenDw+iScreenDx)->sum();
+		if(cnt==iScreenDx)
+			oCScreen->paste(oCScreen->clip(0,iScreenDw,i,iScreenDw+iScreenDx),1,iScreenDw);
+
+	}
+};
 CTetris::~CTetris(){}

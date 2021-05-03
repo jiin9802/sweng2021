@@ -3,7 +3,7 @@
 int Tetris::nBlockTypes=0;
 int Tetris::nBlockDegrees=0;
 int Tetris::iScreenDw=0;
-std::vector<vector<Matrix>> Tetris::setOfBlockObjects;
+std::vector<Matrix> Tetris::setOfBlockObjects;
 
 void Tetris::init(int *setOfBlockArrays[],int max_types,int max_degrees)
 {
@@ -11,7 +11,7 @@ void Tetris::init(int *setOfBlockArrays[],int max_types,int max_degrees)
 	nBlockDegrees=max_degrees;
 	int arrayBlk_maxSize=0;
 	int MaxSize[nBlockTypes];
-	for (int i=0;i<nBlockTypes;i++)
+	for (int i=0;i<max_types;i++)
 	{	
 		int length=0;
 		while(setOfBlockArrays[i*max_degrees][length]!=-1){
@@ -23,17 +23,15 @@ void Tetris::init(int *setOfBlockArrays[],int max_types,int max_degrees)
 	}
 	iScreenDw=arrayBlk_maxSize;
 
-	for(int i=0;i<nBlockTypes;i++)
+	for(int i=0;i<max_types;i++)
 	{
-		std::vector<Matrix> Vec_Blk; 
-		for(int j=0;j<nBlockDegrees;j++)
+		for(int j=0;j<max_degrees;j++)
 		{
-			Vec_Blk.push_back(Matrix(setOfBlockArrays[max_degrees*i+j],MaxSize[i],MaxSize[i]));
+			setOfBlockObjects.push_back(Matrix(setOfBlockArrays[max_degrees*i+j],MaxSize[i],MaxSize[i]));
 		}
-		setOfBlockObjects.push_back(Vec_Blk);
 	}
 	
-}
+};
 Tetris::Tetris(int iScreenDy,int iScreenDx)
 {
 	this->iScreenDy=iScreenDy;
@@ -48,7 +46,7 @@ Tetris::~Tetris(){}
 
 int *Tetris::createArrayScreen()
 {
-	int j;
+	
 	int arrayScreenDx=iScreenDw*2+iScreenDx;
 	int arrayScreenDy=iScreenDy+iScreenDw;
 	int* arrayScreen=new int[arrayScreenDy*arrayScreenDx];
@@ -79,7 +77,7 @@ TetrisState Tetris::accept(char key)
 		iScreen=new Matrix(oScreen);
 		idxBlockType=key-'0';
 		idxBlockDegree=0;
-		currBlk=setOfBlockObjects[idxBlockType][idxBlockDegree];
+		currBlk=setOfBlockObjects[nBlockDegrees*idxBlockType+idxBlockDegree];
 		top=0;
 		left=iScreenDw+iScreenDx/2-currBlk.get_dx()/2;
 		tempBlk=iScreen->clip(top,left,top+currBlk.get_dy(),left+currBlk.get_dx());
@@ -101,7 +99,7 @@ TetrisState Tetris::accept(char key)
 		top+=1;
 	else if(key=='w'){
 		idxBlockDegree=(idxBlockDegree+1)%nBlockDegrees;
-		currBlk=setOfBlockObjects[idxBlockType][idxBlockDegree];
+		currBlk=setOfBlockObjects[nBlockDegrees*idxBlockType+idxBlockDegree];
 	}	
 	else if(key==' '){
 		while (!tempBlk.anyGreaterThan(1)){
@@ -128,7 +126,7 @@ TetrisState Tetris::accept(char key)
 		}
 		else if(key=='w'){
 			idxBlockDegree=(idxBlockDegree-1)&nBlockDegrees;
-			currBlk=setOfBlockObjects[idxBlockType][idxBlockDegree];
+			currBlk=setOfBlockObjects[nBlockDegrees*idxBlockType+idxBlockDegree];
 		}
 		else if(key==' '){
 			top-=1;
