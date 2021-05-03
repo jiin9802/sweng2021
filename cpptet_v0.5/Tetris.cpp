@@ -1,5 +1,6 @@
 #include "Tetris.h"
 #include <cmath>
+#include <cstring>
 int Tetris::nBlockTypes=0;
 int Tetris::nBlockDegrees=0;
 int Tetris::iScreenDw=0;
@@ -141,9 +142,47 @@ TetrisState Tetris::accept(char key)
 	oScreen->paste(&tempBlk,top,left);
 	return state;
 }
+bool Tetris::crush()
+{
+	int dx[iScreenDw];
+	int dy[iScreenDw];
+	int idx=0;
+	int count=0;
+	int a,b;
+	int arr[iScreenDw][iScreenDw];
+	int arr_tmp[iScreenDw][iScreenDw];
+	memcpy(arr,currBlk.get_array(),sizeof(currBlk.get_array()));
+	memcpy(arr_tmp,tempBlk.get_array(),sizeof(tempBlk.get_array()));
+	for(int i=0;i<sizeof(arr);i++)
+	{
+		for(int j=0;j<sizeof(arr[i]);j++)
+		{
+			if(arr[i][j]!=0)
+			{
+				dx[idx++]=i;
+				dy[idx++]=j;
+			}
+		}
+	}
+	for(int i=0;i<sizeof(dx);i++)
+	{
+		a=dx[i];
+		b=dy[i];
+
+		if(arr_tmp[a][b]!=idxBlockType+1)
+			return true;
+	}
+	return false;
+
+}
 void Tetris::deleteFullLines()
 {
-
+	for(int i=0;i<iScreenDy;i++)
+	{
+		int cnt=oScreen->clip(i,iScreenDw, i+1,iScreenDw+iScreenDx)->sum();
+		if(cnt==iScreenDx)
+			oScreen->paste(oScreen->clip(0,iScreenDw,i,iScreenDw+iScreenDx),1,iScreenDw);
+	}
 }
 
 

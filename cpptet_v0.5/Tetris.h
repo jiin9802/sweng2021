@@ -17,6 +17,7 @@ class Tetris {
 		void deleteFullLines();
 	
 		bool justStarted;
+		bool crush();
 		static int nBlockTypes;
 		static int nBlockDegrees;
 		static std::vector<Matrix>setOfBlockObjects;
