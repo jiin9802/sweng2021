@@ -86,7 +86,7 @@ TetrisState Tetris::accept(char key)
 		justStarted=false;
 		cout<<"";
 
-		if(tempBlk.anyGreaterThan(1))
+		if(crush())
 			state=Finished;
 		oScreen=new Matrix(iScreen);
 		oScreen->paste(&tempBlk,top,left);
@@ -103,7 +103,7 @@ TetrisState Tetris::accept(char key)
 		currBlk=setOfBlockObjects[nBlockDegrees*idxBlockType+idxBlockDegree];
 	}	
 	else if(key==' '){
-		while (!tempBlk.anyGreaterThan(1)){
+		while (!crush()){
 			top+=1;
 			tempBlk=iScreen->clip(top,left,top+currBlk.get_dy(),left+currBlk.get_dx());
 			tempBlk=tempBlk.add(&currBlk);
@@ -116,7 +116,7 @@ TetrisState Tetris::accept(char key)
 	tempBlk=iScreen->clip(top,left,top+currBlk.get_dy(),left+currBlk.get_dx());
 	tempBlk=tempBlk.add(&currBlk);
 
-	if(tempBlk.anyGreaterThan(1)){
+	if(crush()){
 		if(key=='a')
 			left+=1;
 		else if(key=='d')
